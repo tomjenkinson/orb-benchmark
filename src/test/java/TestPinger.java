@@ -4,9 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.jboss.narayana.qa.orbbenchmark.orbmanagment.ORBManagement;
-import org.jboss.narayana.qa.orbbenchmark.testmodule.TestModule.Pinger;
-import org.jboss.narayana.qa.orbbenchmark.testmodule.TestModule.PingerHelper;
+import org.jboss.narayana.qa.orbbenchmark.ORBManagement;
 import org.junit.Test;
 import org.omg.CORBA.Object;
 import org.omg.CORBA.ORBPackage.InvalidName;
@@ -24,17 +22,31 @@ public class TestPinger {
 			AlreadyBound, CannotProceed,
 			org.omg.CosNaming.NamingContextPackage.InvalidName, IOException {
 		int iterations = 1000;
-		ORBManagement orbManagement = new ORBManagement("jacorb");
+		String orbName = System.getProperty("orb.name");
+		ORBManagement orbManagement = new ORBManagement(orbName);
 		List<NameComponent> name = new ArrayList<NameComponent>();
 		name.add(new NameComponent("pinger", ""));
 		Object resolve = orbManagement.getNamingContext().resolve(
 				name.toArray(new NameComponent[] {}));
-		Pinger pinger = PingerHelper.narrow(resolve);
-		long currentTimeMillis = System.currentTimeMillis();
-		for (int i = 0; i < iterations; i++) {
-			pinger.ping();
+		long currentTimeMillis = -1;
+		long newCurrentTimeMillis = -1;
+		if (orbName.equals("idlj")) {
+			org.jboss.narayana.qa.orbbenchmark.testmodule.idlj.TestModule.Pinger pinger = org.jboss.narayana.qa.orbbenchmark.testmodule.idlj.TestModule.PingerHelper
+					.narrow(resolve);
+			currentTimeMillis = System.currentTimeMillis();
+			for (int i = 0; i < iterations; i++) {
+				pinger.ping();
+			}
+			newCurrentTimeMillis = System.currentTimeMillis();
+		} else {
+			org.jboss.narayana.qa.orbbenchmark.testmodule.jacorb.TestModule.Pinger pinger = org.jboss.narayana.qa.orbbenchmark.testmodule.jacorb.TestModule.PingerHelper
+					.narrow(resolve);
+			currentTimeMillis = System.currentTimeMillis();
+			for (int i = 0; i < iterations; i++) {
+				pinger.ping();
+			}
+			newCurrentTimeMillis = System.currentTimeMillis();
 		}
-		long newCurrentTimeMillis = System.currentTimeMillis();
 		log.info("Took: " + (newCurrentTimeMillis - currentTimeMillis)
 				+ " milliseconds to execute: " + iterations + " interations");
 		log.info("Each iteration takes: "

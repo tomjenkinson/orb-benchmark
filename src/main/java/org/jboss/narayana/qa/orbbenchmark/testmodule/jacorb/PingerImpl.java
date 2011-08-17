@@ -1,12 +1,13 @@
-package org.jboss.narayana.qa.orbbenchmark.testmodule;
+package org.jboss.narayana.qa.orbbenchmark.testmodule.jacorb;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.jboss.narayana.qa.orbbenchmark.orbmanagment.ORBManagement;
-import org.jboss.narayana.qa.orbbenchmark.testmodule.TestModule.PingerPOA;
+import org.jboss.narayana.qa.orbbenchmark.ORBManagement;
+import org.jboss.narayana.qa.orbbenchmark.PingerServer;
+import org.jboss.narayana.qa.orbbenchmark.testmodule.jacorb.TestModule.PingerPOA;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextOperations;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
@@ -19,10 +20,10 @@ import org.omg.PortableServer.POAPackage.ServantAlreadyActive;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
-public class PingerImpl extends PingerPOA {
+public class PingerImpl extends PingerPOA implements PingerServer {
 	private static final Logger log = LogManager.getLogger(PingerImpl.class);
 
-	public PingerImpl(ORBManagement orbManagement) throws InvalidPolicy,
+	public void init(ORBManagement orbManagement) throws InvalidPolicy,
 			AdapterNonExistent, ServantAlreadyActive, WrongPolicy,
 			ServantNotActive, NotFound, CannotProceed, InvalidName {
 		POA poa = orbManagement.getRootPoa();
@@ -34,6 +35,7 @@ public class PingerImpl extends PingerPOA {
 		name.add(new NameComponent("pinger", ""));
 		org.omg.CORBA.Object objref = poa.servant_to_reference(this);
 		ctx.rebind(name.toArray(new NameComponent[] {}), objref);
+		log.info("Created Jacorb pinger");
 	}
 
 	public void ping() {

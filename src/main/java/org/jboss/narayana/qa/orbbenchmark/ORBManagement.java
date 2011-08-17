@@ -1,4 +1,4 @@
-package org.jboss.narayana.qa.orbbenchmark.orbmanagment;
+package org.jboss.narayana.qa.orbbenchmark;
 
 import java.io.IOException;
 import java.io.InputStream;
