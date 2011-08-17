@@ -21,7 +21,8 @@ public class TestPinger {
 	public void testPinger() throws InvalidName, AdapterInactive, NotFound,
 			AlreadyBound, CannotProceed,
 			org.omg.CosNaming.NamingContextPackage.InvalidName, IOException {
-		int iterations = 1000;
+		int iterations = Integer.parseInt(System.getProperty("iteration.count",
+				"1"));
 		String orbName = System.getProperty("orb.name");
 		ORBManagement orbManagement = new ORBManagement(orbName);
 		List<NameComponent> name = new ArrayList<NameComponent>();

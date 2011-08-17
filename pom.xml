@@ -124,6 +124,7 @@
 						<configuration>
 							<systemPropertyVariables>
 								<orb.name>idlj</orb.name>
+								<iteration.count>${iteration.count}</iteration.count>
 							</systemPropertyVariables>
 							<inherited>true</inherited>
 						</configuration>
@@ -170,6 +171,30 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<inherited>true</inherited>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>1.0-beta-1</version>
+				<executions>
+					<execution>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireProperty>
+									<property>iteration.count</property>
+									<message>"You must specify an iteration count!"</message>
+								</requireProperty>
+							</rules>
+							<fail>true</fail>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 	<dependencies>
