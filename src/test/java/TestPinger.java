@@ -23,7 +23,7 @@ public class TestPinger {
 	public void testPinger() throws InvalidName, AdapterInactive, NotFound,
 			AlreadyBound, CannotProceed,
 			org.omg.CosNaming.NamingContextPackage.InvalidName, IOException {
-		int iterations = 100000;
+		int iterations = 1000;
 		ORBManagement orbManagement = new ORBManagement("jacorb");
 		List<NameComponent> name = new ArrayList<NameComponent>();
 		name.add(new NameComponent("pinger", ""));
