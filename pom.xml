@@ -36,15 +36,12 @@
 	<profiles>
 		<profile>
 			<id>jacorb</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>idlj-maven-plugin</artifactId>
-						<version>2.2.3</version>
+						<version>1.1</version>
 						<dependencies>
 							<dependency>
 								<groupId>org.jacorb</groupId>
@@ -69,7 +66,8 @@
 											<packagePrefixes>
 												<packagePrefix>
 													<type>TestModule</type>
-													<prefix>org.jboss.narayana.qa.orbbenchmark.testmodule</prefix>
+													<prefix>org.jboss.narayana.qa.orbbenchmark.testmodule
+													</prefix>
 												</packagePrefix>
 											</packagePrefixes>
 										</source>
@@ -108,7 +106,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>idlj-maven-plugin</artifactId>
-						<version>2.2.3</version>
+						<version>1.1</version>
 						<executions>
 							<execution>
 								<goals>
@@ -126,7 +124,8 @@
 											<packagePrefixes>
 												<packagePrefix>
 													<type>TestModule</type>
-													<prefix>org.jboss.narayana.qa.orbbenchmark.testmodule</prefix>
+													<prefix>org.jboss.narayana.qa.orbbenchmark.testmodule
+													</prefix>
 												</packagePrefix>
 											</packagePrefixes>
 										</source>
@@ -139,6 +138,25 @@
 			</build>
 		</profile>
 	</profiles>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>org.jboss.narayana.qa.orbbenchmark.Server</mainClass>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

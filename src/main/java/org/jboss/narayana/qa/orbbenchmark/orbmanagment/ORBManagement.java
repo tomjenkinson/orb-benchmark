@@ -1,4 +1,4 @@
-package org.jboss.narayana.qa.orbmanagment;
+package org.jboss.narayana.qa.orbbenchmark.orbmanagment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,34 +24,35 @@ import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 public class ORBManagement implements Runnable {
 	private static final Logger log = LogManager.getLogger(ORBManagement.class);
 	private ORB orb;
-	private POA root_poa;
+	private POA rootPoa;
 	private NamingContext nc;
 	private Thread callbackThread;
+	private Object runLock = new Object();
+	private boolean orbDone;
 
-	public ORBManagement(String domainName, String propertiesFile)
-			throws IOException, InvalidName, AdapterInactive, NotFound,
-			AlreadyBound, CannotProceed,
+	public ORBManagement(String orbName) throws IOException, InvalidName,
+			AdapterInactive, NotFound, AlreadyBound, CannotProceed,
 			org.omg.CosNaming.NamingContextPackage.InvalidName {
 		Properties properties = new Properties();
 		InputStream is = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(propertiesFile);
+				.getResourceAsStream(orbName + ".properties");
 		properties.load(is);
 		is.close();
 		orb = org.omg.CORBA.ORB.init(new String[] { "-ORBInitRef",
 				"NameService=corbaloc::localhost:1050/NameService" },
 				properties);
-		root_poa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
-		root_poa.the_POAManager().activate();
+		rootPoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
+		rootPoa.the_POAManager().activate();
 
 		NamingContextExt nce = NamingContextExtHelper.narrow(orb
 				.resolve_initial_references("NameService"));
 		try {
 			NameComponent[] aNameComponentArray = new NameComponent[1];
-			aNameComponentArray[0] = new NameComponent(domainName, "");
+			aNameComponentArray[0] = new NameComponent("orb-benchmark", "");
 			nc = nce.bind_new_context(aNameComponentArray);
 		} catch (AlreadyBound e) {
-			log.info("Context already bound");
-			org.omg.CORBA.Object aObject = nce.resolve_str(domainName);
+			log.debug("Context already bound");
+			org.omg.CORBA.Object aObject = nce.resolve_str("orb-benchmark");
 			nc = NamingContextHelper.narrow(aObject);
 		}
 
@@ -61,8 +62,21 @@ public class ORBManagement implements Runnable {
 	}
 
 	public void run() {
-		log.info("Running the orb");
+		log.debug("Running the orb");
 		orb.run();
+		synchronized (runLock) {
+			orbDone = true;
+			runLock.notify();
+		}
+	}
+
+	public void block() throws InterruptedException {
+		synchronized (runLock) {
+			if (!orbDone) {
+				log.info("Waiting for the orb to complete");
+				runLock.wait();
+			}
+		}
 	}
 
 	public void destroy() {
@@ -77,11 +91,19 @@ public class ORBManagement implements Runnable {
 		}
 		log.info("Closed");
 		nc = null;
-		root_poa = null;
+		rootPoa = null;
 		orb = null;
 	}
 
 	public NamingContextOperations getNamingContext() {
 		return nc;
+	}
+
+	public ORB getOrb() {
+		return orb;
+	}
+
+	public POA getRootPoa() {
+		return rootPoa;
 	}
 }
