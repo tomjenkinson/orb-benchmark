@@ -9,7 +9,7 @@ To run the tests with jacorb:
 2. On the remote node, start server:
 	mvn clean compile exec:java -Dname.server.address=<e.g. localhost> -P jacorb 
 3. On the client, start the tests:
-	mvn test -P jacorb -Diteration.count=50000
+	mvn test -Diteration.count=50000 -Dname.server.address=<e.g. localhost> -P jacorb
 	
 To run the tests with idlj:
 1. Start the ORB naming service locally on port 1050
@@ -17,4 +17,4 @@ To run the tests with idlj:
 2. On the remote node, start server:
 	mvn clean compile exec:java -Dname.server.address=<e.g. localhost> -P idlj
 3. On the client, start the tests:
-	mvn test -P idlj -Diteration.count=50000
+	mvn test -Diteration.count=50000 -Dname.server.address=<e.g. localhost> -P idlj
