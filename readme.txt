@@ -7,6 +7,6 @@ To run the tests:
 1. Start the ORB naming service locally on port 1050
 	orbd  -ORBInitialPort 1050
 2. On the remote node, start server:
-	mvn clean compile exec:java -P jacorb
+	mvn clean compile exec:java -P jacorb -Dname.server.address=<e.g. localhost>
 3. On the client, start the tests:
 	mvn test

@@ -38,8 +38,12 @@ public class ORBManagement implements Runnable {
 				.getResourceAsStream(orbName + ".properties");
 		properties.load(is);
 		is.close();
-		orb = org.omg.CORBA.ORB.init(new String[] { "-ORBInitRef",
-				"NameService=corbaloc::localhost:1050/NameService" },
+		orb = org.omg.CORBA.ORB.init(
+				new String[] {
+						"-ORBInitRef",
+						"NameService=corbaloc::"
+								+ System.getProperty("name.server.address",
+										"localhost") + ":1050/NameService" },
 				properties);
 		rootPoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
 		rootPoa.the_POAManager().activate();

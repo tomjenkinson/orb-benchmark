@@ -38,6 +38,5 @@ public class PingerImpl extends PingerPOA {
 
 	public void ping() {
 		// This does nothing as we are doing a performance test of the orb
-		log.info("Pung");
 	}
 }
