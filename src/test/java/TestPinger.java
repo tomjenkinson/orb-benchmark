@@ -23,7 +23,7 @@ public class TestPinger {
 	public void testPinger() throws InvalidName, AdapterInactive, NotFound,
 			AlreadyBound, CannotProceed,
 			org.omg.CosNaming.NamingContextPackage.InvalidName, IOException {
-		int iterations = 1000;
+		int iterations = 100000;
 		ORBManagement orbManagement = new ORBManagement("jacorb");
 		List<NameComponent> name = new ArrayList<NameComponent>();
 		name.add(new NameComponent("pinger", ""));
@@ -36,7 +36,10 @@ public class TestPinger {
 		}
 		long newCurrentTimeMillis = System.currentTimeMillis();
 		log.info("Took: " + (newCurrentTimeMillis - currentTimeMillis)
-				+ " to execute: " + iterations + " interations");
+				+ " milliseconds to execute: " + iterations + " interations");
+		log.info("Each iteration takes: "
+				+ ((newCurrentTimeMillis - currentTimeMillis) / (double) iterations)
+				+ " milliseconds");
 		orbManagement.destroy();
 	}
 }
