@@ -48,6 +48,7 @@ public class TestPinger {
 			}
 			newCurrentTimeMillis = System.currentTimeMillis();
 		}
+		log.info("Timings taken using orb: " + orbName);
 		log.info("Took: " + (newCurrentTimeMillis - currentTimeMillis)
 				+ " milliseconds to execute: " + iterations + " interations");
 		log.info("Each iteration takes: "
