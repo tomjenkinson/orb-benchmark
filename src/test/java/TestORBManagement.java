@@ -2,6 +2,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
+import org.jboss.narayana.qa.orbmanagment.ORBManagement;
 import org.junit.Test;
 import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosNaming.NamingContextPackage.AlreadyBound;

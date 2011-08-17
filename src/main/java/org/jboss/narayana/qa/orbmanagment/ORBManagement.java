@@ -1,3 +1,5 @@
+package org.jboss.narayana.qa.orbmanagment;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -36,7 +38,7 @@ public class ORBManagement implements Runnable {
 		properties.load(is);
 		is.close();
 		orb = org.omg.CORBA.ORB.init(new String[] { "-ORBInitRef",
-				"NameService=corbaloc::${JBOSSAS_IP_ADDR}:3528/NameService" },
+				"NameService=corbaloc::localhost:1050/NameService" },
 				properties);
 		root_poa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
 		root_poa.the_POAManager().activate();
