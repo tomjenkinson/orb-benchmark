@@ -38,7 +38,11 @@ public class ORBManagement implements Runnable {
 				.getResourceAsStream(orbName + ".properties");
 		properties.load(is);
 		is.close();
-		String nameServerAddress = System.getProperty("name.server.address", "localhost");
+		String nameServerAddress = System.getProperty("name.server.address");
+		if (nameServerAddress == null) {
+			throw new RuntimeException(
+					"The name.server.address was not detected in system properties");
+		}
 		orb = org.omg.CORBA.ORB.init(new String[] {
 				"-ORBInitRef",
 				"NameService=corbaloc::" + nameServerAddress

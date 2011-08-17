@@ -36,42 +36,9 @@
 	<profiles>
 		<profile>
 			<id>jacorb</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.2</version>
-						<executions>
-							<execution>
-								<goals>
-									<goal>java</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<mainClass>org.jboss.narayana.qa.orbbenchmark.Server</mainClass>
-							<systemProperties>
-								<systemProperty>
-									<key>orb.name</key>
-									<value>jacorb</value>
-								</systemProperty>
-							</systemProperties>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.7.2</version>
-						<configuration>
-							<systemPropertyVariables>
-								<orb.name>jacorb</orb.name>
-							</systemPropertyVariables>
-							<inherited>true</inherited>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
+			<properties>
+				<orb.name>jacorb</orb.name>
+			</properties>
 			<dependencies>
 				<!-- START TRANSACTIONS -->
 				<dependency>
@@ -94,49 +61,67 @@
 			</dependencies>
 		</profile>
 		<profile>
-			<id>idlj</id><!-- RAN BY HAND idl -$JAVA_HOME/bin/idlj -fall -pkgPrefix 
-				TestModule org.jboss.narayana.qa.orbbenchmark.testmodule.idlj TestModule.idl -->
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.2</version>
-						<executions>
-							<execution>
-								<goals>
-									<goal>java</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<mainClass>org.jboss.narayana.qa.orbbenchmark.Server</mainClass>
-							<systemProperties>
-								<systemProperty>
-									<key>orb.name</key>
-									<value>idlj</value>
-								</systemProperty>
-							</systemProperties>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.7.2</version>
-						<configuration>
-							<systemPropertyVariables>
-								<orb.name>idlj</orb.name>
-								<iteration.count>${iteration.count}</iteration.count>
-							</systemPropertyVariables>
-							<inherited>true</inherited>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
+			<id>idlj</id>
+			<properties>
+				<orb.name>idlj</orb.name>
+			</properties>
 		</profile>
 	</profiles>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>org.jboss.narayana.qa.orbbenchmark.Server</mainClass>
+					<systemProperties>
+						<systemProperty>
+							<key>orb.name</key>
+							<value>${orb.name}</value>
+						</systemProperty>
+					</systemProperties>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.7.2</version>
+				<configuration>
+					<systemPropertyVariables>
+						<orb.name>${orb.name}</orb.name>
+						<iteration.count>${iteration.count}</iteration.count>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<apply executable="${env.JAVA_HOME}/bin/idlj">
+									<fileset dir="src/main/idl" includes="*.idl" />
+									<arg
+										line="-fall -td target/generated-sources/idl -pkgPrefix TestModule org.jboss.narayana.qa.orbbenchmark.testmodule.idlj" />
+								</apply>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>idlj-maven-plugin</artifactId>
@@ -173,49 +158,11 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<inherited>true</inherited>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>1.0-beta-1</version>
-				<executions>
-					<execution>
-						<id>iteration.count</id>
-						<phase>process-test-resources</phase>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<requireProperty>
-									<property>iteration.count</property>
-									<message>"You must specify an iteration.count!"</message>
-								</requireProperty>
-							</rules>
-							<fail>true</fail>
-						</configuration>
-					</execution>
-					<execution>
-						<id>name.server.address</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<requireProperty>
-									<property>name.server.address</property>
-									<message>"You must specify a name.server.address!"</message>
-								</requireProperty>
-							</rules>
-							<fail>true</fail>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
 		</plugins>
 	</build>
+	<properties>
+		<iteration.count>1</iteration.count>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
