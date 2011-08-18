@@ -94,7 +94,7 @@ public class ORBManagement implements Runnable {
 	}
 
 	public void destroy() {
-		log.info("Closing");
+		log.debug("Closing");
 		orb.shutdown(true);
 		orb.destroy();
 		try {
@@ -103,7 +103,7 @@ public class ORBManagement implements Runnable {
 		} catch (InterruptedException e) {
 			log.error("Could not join with callback: " + e, e);
 		}
-		log.info("Closed");
+		log.debug("Closed");
 		nc = null;
 		rootPoa = null;
 		orb = null;
