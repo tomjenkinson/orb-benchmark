@@ -38,7 +38,7 @@ public class ORBManagement implements Runnable {
 				.getResourceAsStream(orbName + ".properties");
 		properties.load(is);
 		is.close();
-		log.debug("Loaded properties);
+		log.debug("Loaded properties");
 		String nameServerAddress = System.getProperty("name.server.address");
 		if (nameServerAddress == null) {
 			throw new RuntimeException(
