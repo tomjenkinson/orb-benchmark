@@ -38,33 +38,41 @@ public class ORBManagement implements Runnable {
 				.getResourceAsStream(orbName + ".properties");
 		properties.load(is);
 		is.close();
+		log.debug("Loaded properties);
 		String nameServerAddress = System.getProperty("name.server.address");
 		if (nameServerAddress == null) {
 			throw new RuntimeException(
 					"The name.server.address was not detected in system properties");
 		}
+		log.debug("Initializing the ORB");
 		orb = org.omg.CORBA.ORB.init(new String[] {
 				"-ORBInitRef",
 				"NameService=corbaloc::" + nameServerAddress
 						+ ":1050/NameService" }, properties);
+	  log.debug("Resolving RootPOA");
 		rootPoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
 		rootPoa.the_POAManager().activate();
-
+		
+    log.debug("Resolving the NameService");
 		NamingContextExt nce = NamingContextExtHelper.narrow(orb
 				.resolve_initial_references("NameService"));
 		try {
 			NameComponent[] aNameComponentArray = new NameComponent[1];
 			aNameComponentArray[0] = new NameComponent("orb-benchmark", "");
+			log.debug("Attempting to bind the context orb-benchmark");
 			nc = nce.bind_new_context(aNameComponentArray);
+			log.debug("Bound the context orb-benchmark");
 		} catch (AlreadyBound e) {
 			log.debug("Context already bound");
 			org.omg.CORBA.Object aObject = nce.resolve_str("orb-benchmark");
 			nc = NamingContextHelper.narrow(aObject);
+  		log.debug("Resolved the context orb-benchmark");
 		}
 
 		callbackThread = new Thread(this);
 		callbackThread.setDaemon(true);
 		callbackThread.start();
+		log.debug("ORBManagement initialized");
 	}
 
 	public void run() {
